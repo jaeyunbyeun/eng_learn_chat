@@ -18,7 +18,7 @@ export default function Login() {
     username: '',
     email: '',
     password: '',
-    confirmPassword: '', // 🔹 추가
+    confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -36,7 +36,7 @@ export default function Login() {
       username: '',
       email: '',
       password: '',
-      confirmPassword: '', // 🔹 초기화
+      confirmPassword: '',
     });
     setIsSignIn((p) => !p);
   };
@@ -48,6 +48,7 @@ export default function Login() {
 
   const isEmail = (v: string) => /\S+@\S+\.\S+/.test(v);
 
+  // 로그인 시도 (identifier는 username 또는 email)
   const loginSmart = async (identifier: string, password: string) => {
     const trimmed = identifier.trim();
     const tries: Array<Record<string, string>> = [];
@@ -70,7 +71,13 @@ export default function Login() {
       const text = await res.text();
       if (res.ok) {
         const data: AuthResponse = text ? JSON.parse(text) : {};
+        // ★ 토큰 저장
         if (data?.token) localStorage.setItem('token', data.token);
+        // ★ 이메일 저장 (응답 우선, 없으면 identifier가 이메일일 때 fallback)
+        const resolvedEmail =
+          data?.user?.email?.trim() ||
+          (isEmail(trimmed) ? trimmed : undefined);
+        if (resolvedEmail) localStorage.setItem('email', resolvedEmail);
         return data;
       }
       lastErrText = text || `HTTP ${res.status}`;
@@ -88,11 +95,14 @@ export default function Login() {
     const text = await res.text();
     if (!res.ok) throw new Error(text || `HTTP ${res.status}`);
     const data: AuthResponse = text ? JSON.parse(text) : {};
+    // ★ 토큰/이메일 저장 (응답 email 우선, 없으면 폼의 email 사용)
     if (data?.token) localStorage.setItem('token', data.token);
+    const resolvedEmail = data?.user?.email?.trim() || email.trim();
+    if (resolvedEmail) localStorage.setItem('email', resolvedEmail);
     return data;
   };
 
-  // 🔹 실시간 비밀번호 불일치 여부
+  // 실시간 비밀번호 불일치
   const pwMismatch = useMemo(() => {
     if (isSignIn) return false;
     return !!form.password && !!form.confirmPassword && form.password !== form.confirmPassword;
@@ -117,7 +127,7 @@ export default function Login() {
         setLoading(false);
       }
     } else {
-      // 🔹 회원가입 검증
+      // 회원가입 검증
       if (!form.username.trim() || !isEmail(form.email.trim()) || !form.password) {
         setError('유효한 사용자명/이메일/비밀번호를 입력해주세요.');
         return;
@@ -128,8 +138,13 @@ export default function Login() {
       }
       setLoading(true);
       try {
-        await signup(form.username, form.email, form.password);
-        setIsSignIn(true);
+        const resp = await signup(form.username, form.email, form.password);
+        // 토큰을 주는 회원가입이라면 바로 홈으로, 아니면 로그인 폼으로 전환
+        if (resp?.token) {
+          navigate('/home');
+        } else {
+          setIsSignIn(true);
+        }
       } catch (e: any) {
         setError(e?.message || '회원가입에 실패했습니다.');
       } finally {
@@ -178,7 +193,6 @@ export default function Login() {
                   autoComplete="new-password"
                 />
               </div>
-              {/* 🔹 비밀번호 확인 */}
               <div className="input-group">
                 <i className="bx bxs-lock-alt"></i>
                 <input
@@ -193,7 +207,6 @@ export default function Login() {
                 />
               </div>
 
-              {/* 🔹 실시간 불일치 안내 */}
               {!isSignIn && pwMismatch && (
                 <p id="pw-helper" className="error">비밀번호가 일치하지 않습니다.</p>
               )}

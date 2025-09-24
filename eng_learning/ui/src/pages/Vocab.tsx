@@ -18,6 +18,10 @@ const authHeaders = (): Headers => {
   const h = new Headers();
   const t = localStorage.getItem("token");
   if (t) h.set("Authorization", `Bearer ${t}`);
+
+  const email = localStorage.getItem("email");
+  if (email) h.set("X-Email", email);
+
   return h;
 };
 
@@ -61,7 +65,8 @@ export default function Vocab() {
   useEffect(() => {
     (async () => {
       const token = localStorage.getItem("token");
-      if (!token) {
+      const email = localStorage.getItem("email");   // ★ 추가
+      if (!token || !email) {                        // ★ 추가
         setLoading(false);
         nav("/login");
         return;

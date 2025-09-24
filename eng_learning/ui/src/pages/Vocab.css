@@ -1,126 +1,110 @@
-/* 컨테이너 */
-.vocab-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-image: linear-gradient(-45deg, #ffffff, #ffffff);
-  font-family: 'Poppins', sans-serif;
+/* ===== 색/타이포 기본 ===== */
+:root{
+  --bg:#f7f9fc; --card:#fff; --border:#e5e7eb;
+  --text:#0f172a; --muted:#64748b;
+  --primary:#4f46e5; --primary-600:#4338ca;
+  --success:#16a34a; --danger:#ef4444;
+  --ring:0 0 0 .2rem rgba(79,70,229,.25);
+}
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{margin:0; color:var(--text); font-family:ui-sans-serif,system-ui,Segoe UI,Apple SD Gothic Neo,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+
+/* ===== 컨테이너/카드 ===== */
+.vocab-container{
+  display:flex; align-items:center; justify-content:center;
+  height:100vh; background:var(--bg);
+}
+.vocab-box{
+  width:clamp(320px, 80vw, 880px);
+  height:80vh; background:var(--card); color:var(--text);
+  padding:24px; border-radius:16px; text-align:left;
+  border:1px solid var(--border);
+  box-shadow:0 12px 40px rgba(2,6,23,.06);
+  display:flex; flex-direction:column; overflow:hidden;
 }
 
-/* 카드 박스 */
-.vocab-box {
-  width: clamp(320px, 80vw, 680px);
-  height: 80vh;
-  background-color: #fff;
-  padding: clamp(20px, 3vw, 32px) clamp(16px, 2.6vw, 24px);
-  border-radius: 16px;
-  text-align: left;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.35);
+/* ===== 헤더 ===== */
+.vocab-header{display:flex; align-items:center; gap:10px; margin-bottom:12px}
+.vocab-header h2{margin:0; font-size:24px; font-weight:800; letter-spacing:-.2px; color:#7caaeb}
+.back-button{
+  background:none; border:none; font-size:22px; cursor:pointer; color:#7caaeb; padding:0;
+  transition:.18s transform,.18s color;
+}
+.back-button:hover{transform:translateY(-1px); color:#5d96dc}
 
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  overflow: hidden; /* 내부 스크롤용 */
+/* ===== 입력 폼 ===== */
+.vocab-form{
+  display:grid;
+  grid-template-columns: 1.1fr 1.1fr 2fr auto;
+  gap:10px; margin:14px 0 16px;
 }
+.vocab-input{
+  width:100%; padding:12px 14px; border:1px solid var(--border);
+  border-radius:12px; background:#fff; outline:none;
+  transition:.18s border-color,.18s box-shadow;
+}
+.vocab-input::placeholder{color:var(--muted)}
+.vocab-input:focus{border-color:var(--primary); box-shadow:var(--ring)}
+.add-btn{
+  padding:12px 18px; border:1px solid transparent; border-radius:12px;
+  background:var(--primary); color:#fff; font-weight:700; cursor:pointer;
+  transition:.18s transform,.18s background-color;
+}
+.add-btn:hover{background:var(--primary-600); transform:translateY(-1px)}
+.add-btn:disabled{opacity:.6; cursor:not-allowed}
 
-/* 헤더 */
-.vocab-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: clamp(12px, 2vw, 16px);
+/* ===== 리스트(스크롤) ===== */
+.vocab-list{
+  list-style:none; margin:0; padding:0; flex:1 1 auto; overflow:auto; padding-right:4px;
+  scroll-behavior:smooth;
 }
-.vocab-header h2 {
-  font-size: clamp(1.3rem, 3vw, 1.7rem);
-  margin: 0;
-  color: #7caaeb;
-}
+.vocab-list::-webkit-scrollbar{width:8px}
+.vocab-list::-webkit-scrollbar-thumb{background:#d1d5db; border-radius:6px}
 
-/* 뒤로가기 버튼 */
-.back-button {
-  background: none;
-  border: none;
-  font-size: clamp(1.3rem, 2.2vw, 1.5rem);
-  cursor: pointer;
-  color: #7caaeb;
-  padding: 0;
-  transition: transform .2s, color .2s;
+/* ===== 아이템 ===== */
+.vocab-item{
+  background:#f2f6fd; border:1px solid var(--border);
+  padding:14px; border-radius:12px; margin-bottom:10px;
+  transition:.18s background-color,.18s box-shadow,.18s border-color;
+  box-shadow:0 2px 8px rgba(2,6,23,.04);
 }
-.back-button:hover {
-  transform: scale(1.12);
-  color: #5d96dc;
-}
+.vocab-item:hover{background:#eef3fb; box-shadow:0 4px 12px rgba(2,6,23,.06)}
+.vocab-item.known{background:#ecfdf5; border-color:#d1fae5}
 
-/* 리스트 래퍼: 내용 스크롤 */
-.vocab-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  flex: 1 1 auto;
-  overflow-y: auto;
-  padding-right: 4px; /* 스크롤 여백 */
-  scroll-behavior: smooth;
-}
+.vocab-top-row{display:flex; align-items:center; justify-content:space-between; gap:8px}
+.vocab-item h3{margin:0 0 6px; font-size:18px}
 
-/* 스크롤바 커스텀 */
-.vocab-list::-webkit-scrollbar { width: 6px; }
-.vocab-list::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 3px;
+/* ===== 액션/체크/버튼 ===== */
+.vocab-actions{display:flex; align-items:center; gap:10px}
+.checkbox-label{margin-left:6px; font-size:14px; color:var(--text)}
+.vocab-actions input[type="checkbox"]{width:16px; height:16px; accent-color:var(--success)}
+.delete-btn{
+  background:#fff; color:var(--danger); border:1px solid #fecaca; border-radius:10px;
+  padding:8px 12px; font-weight:700; cursor:pointer; transition:.18s background,.18s transform;
 }
+.delete-btn:hover{background:#fff1f2; transform:translateY(-1px)}
 
-/* 아이템 */
-.vocab-item {
-  background: #e9f1fa;
-  padding: clamp(10px, 2.2vw, 14px);
-  border-radius: 10px;
-  margin-bottom: clamp(8px, 1.6vw, 12px);
-  transition: background-color .25s, box-shadow .25s;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+/* ===== 에러/빈 상태 ===== */
+.form-error{
+  margin:0 0 8px; padding:10px 12px; border-radius:10px;
+  background:#fef2f2; color:#991b1b; border:1px solid #fecaca;
 }
-.vocab-item:hover {
-  background: #e1ebf4;
-  box-shadow: 0 2px 6px rgba(0,0,0,.08);
-}
-.vocab-item.known { background: #d3f2dc; }  /* 아는 단어 강조 */
+.empty{padding:18px; color:var(--muted); text-align:center}
 
-/* 아이템 내용 */
-.vocab-item h3 {
-  margin: 0 0 4px;
-  color: #333;
-  font-size: clamp(1rem, 2.2vw, 1.1rem);
+/* ===== 반응형 ===== */
+@media (max-width: 860px){
+  .vocab-form{grid-template-columns:1fr 1fr; grid-auto-rows:auto}
 }
-.vocab-item p {
-  margin: 4px 0 0;
-  color: #555;
-  font-size: clamp(0.95rem, 2vw, 1rem);
-  line-height: 1.45;
+@media (max-width: 560px){
+  .vocab-form{grid-template-columns:1fr; gap:8px}
 }
 
-/* 상단 행(단어/체크 등) */
-.vocab-top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
-
-/* 체크박스 라벨 */
-.checkbox-label {
-  margin-left: 6px;
-  font-size: clamp(0.88rem, 1.8vw, 0.95rem);
-  color: #333;
-}
-
-/* 타이틀(별도 사용 시) */
-.vocab-box h2 {
-  font-size: clamp(1.4rem, 3.2vw, 2rem);
-  margin-bottom: 1rem;
-  color: #7caaeb;
-}
-
-/* 초소형 화면 보정 */
-@media (max-width: 480px) {
-  .vocab-box { width: min(96vw, 540px); }
+/* ===== 다크 모드 살짝 ===== */
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0b1220; --card:#0f172a; --border:#1f2937; --text:#e5e7eb; --muted:#9ca3af }
+  .vocab-input{background:#0f172a; color:var(--text)}
+  .vocab-item{background:#0f172a; border-color:#1f2937}
+  .vocab-item:hover{background:#111827}
+  .delete-btn{background:#0f172a}
 }

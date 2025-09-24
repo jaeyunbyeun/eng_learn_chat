@@ -1,24 +1,29 @@
 gemini:
-  api-key: AIzaSyC7K3XTSADZWzvk8B7zDwYYRWjvmtmyRmI
+  api-key: AIzaSyC7K3XTSADZWzvk8B7zDwYYRWjvmtmyRmI   # ← 환경변수로 치환 권장
 
 server:
   port: 8080
 
 spring:
   application:
-    name:gemini-chat
+    name: gemini-chat
   jackson:
     serialization:
       INDENT_OUTPUT: true
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/myappdb
-    username: appuser
-    password: app_pass
+    url: jdbc:postgresql://localhost:5432/vocabdb
+    username: vocab
+    password: 6031
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
 
   jpa:
-     hibernate:
-       ddl-auto: update
-     show-sql: true
-     properties:
-       hibernate.format_sql: true
+    hibernate:
+      ddl-auto: update           # 개발 중엔 update, 배포는 validate 권장
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
